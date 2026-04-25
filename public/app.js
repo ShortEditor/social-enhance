@@ -260,7 +260,8 @@ async function generate() {
   setLoading(true);
 
   try {
-    const GEMINI_API_KEY = firebaseConfig.apiKey; // Using the key from your Firebase config
+    // We must use the specific Gemini API key, NOT the Firebase API key
+    const GEMINI_API_KEY = "AIzaSyCbLODyORwkW-Vcr3a8EVuoVoODhmUwZpY";
     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const res = await fetch(GEMINI_URL, {
