@@ -1,10 +1,26 @@
 /* ─── app.js — Instant-Epic Frontend Logic ─────────────────────────────────── */
 
-const API_URL = window.location.port === '3000'
-  ? '/api/generate'
-  : 'http://localhost:3000/api/generate';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// ─── Firebase Config ─────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCnhk_7GKTWuoHgmX6mKVWeOWlfCTHKoAc",
+  authDomain: "social-app-94b55.firebaseapp.com",
+  projectId: "social-app-94b55",
+  storageBucket: "social-app-94b55.firebasestorage.app",
+  messagingSenderId: "1071387367017",
+  appId: "1:1071387367017:web:56fb2464c3d15812a774f8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // ─── DOM References ──────────────────────────────────────────────────────────
+const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+  ? 'http://localhost:3000/api/generate'
+  : '/api/generate';
+
 const ideaInput    = document.getElementById('idea-input');
 const charCounter  = document.getElementById('char-counter');
 const generateBtn  = document.getElementById('generate-btn');
@@ -232,30 +248,34 @@ async function generate() {
   }
 }
 
-// ─── History Logic ────────────────────────────────────────────────────────────
+// ─── History Logic (Firebase Firestore) ───────────────────────────────────────
 function loadHistory() {
-  const stored = localStorage.getItem('instant_epic_history');
-  if (stored) {
-    try {
-      historyData = JSON.parse(stored);
-      renderHistorySidebar();
-    } catch (e) {}
-  }
+  const q = query(collection(db, "generations"), orderBy("timestamp", "desc"), limit(20));
+  
+  onSnapshot(q, (snapshot) => {
+    historyData = [];
+    snapshot.forEach((doc) => {
+      historyData.push({ id: doc.id, ...doc.data() });
+    });
+    renderHistorySidebar();
+  }, (error) => {
+    console.error("Error fetching history: ", error);
+  });
 }
 
-function saveToHistory(idea, data, format, tone) {
-  const newItem = {
-    id: Date.now(),
-    idea,
-    data,
-    format,
-    tone,
-    date: new Date().toLocaleDateString()
-  };
-  historyData.unshift(newItem);
-  if (historyData.length > 20) historyData.pop(); // Keep last 20
-  localStorage.setItem('instant_epic_history', JSON.stringify(historyData));
-  renderHistorySidebar();
+async function saveToHistory(idea, data, format, tone) {
+  try {
+    await addDoc(collection(db, "generations"), {
+      idea,
+      data,
+      format,
+      tone,
+      date: new Date().toLocaleDateString(),
+      timestamp: Date.now()
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 }
 
 function renderHistorySidebar() {
