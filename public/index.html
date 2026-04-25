@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Instant-Epic — Transform your raw idea into a viral social media content kit in seconds. AI-powered hook, cinematic prompt, and distribution strategy." />
+  <meta property="og:title" content="Instant-Epic | From Raw Thought to Viral Asset in 10 Seconds" />
+  <meta property="og:description" content="AI-powered content engine. Generate hooks, visual prompts, and hashtags instantly." />
+  <meta name="theme-color" content="#0d0d1a" />
+  <title>Instant-Epic | AI Content Kit Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── Animated Background ─────────────────────────────────────────── -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- ─── Navigation ──────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand" aria-label="Instant-Epic Home">
+        <span class="brand-icon" aria-hidden="true">⚡</span>
+        <span class="brand-name">Instant<span class="brand-accent">-Epic</span></span>
+      </a>
+      <div class="nav-actions">
+        <button id="history-toggle" class="history-toggle-btn" aria-label="Toggle History">
+          <span aria-hidden="true">🕒</span> History
+        </button>
+        <div class="nav-badge">Powered by Gemini 2.5 Flash</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── History Sidebar ──────────────────────────────────────────────── -->
+  <aside id="history-sidebar" class="history-sidebar" aria-hidden="true">
+    <div class="history-header">
+      <h2>Your Epics</h2>
+      <button id="close-history" class="close-btn" aria-label="Close History">✕</button>
+    </div>
+    <div id="history-list" class="history-list">
+      <!-- History items will be injected here -->
+      <p class="empty-history">No generated kits yet.</p>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-kicker">
+        <span class="kicker-dot" aria-hidden="true"></span>
+        AI Creative Engine · Live
+      </div>
+      <h1 id="hero-heading" class="hero-title">
+        Turn any idea into a<br/>
+        <span class="title-gradient">viral content kit</span>
+      </h1>
+      <p class="hero-sub">
+        Drop your raw thought below. Get a scroll-stopping hook, cinematic visual prompt,
+        and a full distribution strategy — in under 3 seconds.
+      </p>
+
+      <!-- Input Card -->
+      <div class="input-card" role="region" aria-label="Content idea input">
+        <div class="input-wrapper">
+          <label for="idea-input" class="input-label">Your Raw Idea</label>
+          <textarea
+            id="idea-input"
+            class="idea-textarea"
+            placeholder="e.g. How I built a startup in 48 hours at a hackathon..."
+            rows="3"
+            maxlength="500"
+            aria-describedby="char-counter idea-hint"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+          <div class="input-footer">
+            <span id="idea-hint" class="input-hint">Be specific — better input = better output</span>
+            <span id="char-counter" class="char-counter" aria-live="polite">0 / 500</span>
+          </div>
+        </div>
+
+        <!-- Options Container -->
+        <div class="options-container">
+          <!-- Content Type -->
+          <div class="option-group">
+            <span class="options-label">Format:</span>
+            <div class="segmented-control" role="group" aria-label="Content Format">
+              <input type="radio" id="format-video" name="contentType" value="video" checked>
+              <label for="format-video">Short Video</label>
+              
+              <input type="radio" id="format-thread" name="contentType" value="thread">
+              <label for="format-thread">Thread</label>
+              
+              <input type="radio" id="format-carousel" name="contentType" value="carousel">
+              <label for="format-carousel">Carousel</label>
+            </div>
+          </div>
+
+          <!-- Tone -->
+          <div class="option-group">
+            <span class="options-label">Tone:</span>
+            <div class="tone-chips" role="group" aria-label="Content Tone">
+              <input type="radio" id="tone-viral" name="tone" value="viral" checked>
+              <label for="tone-viral" class="tone-chip">🔥 Viral</label>
+              
+              <input type="radio" id="tone-edu" name="tone" value="educational">
+              <label for="tone-edu" class="tone-chip">🧠 Smart</label>
+              
+              <input type="radio" id="tone-funny" name="tone" value="humorous">
+              <label for="tone-funny" class="tone-chip">😂 Funny</label>
+              
+              <input type="radio" id="tone-pro" name="tone" value="professional">
+              <label for="tone-pro" class="tone-chip">💼 Pro</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Example Chips -->
+        <div class="example-chips" role="group" aria-label="Example ideas">
+          <span class="chips-label">Try:</span>
+          <button class="chip" id="chip-1" data-idea="How I built a startup in 48 hours at a hackathon">Hackathon startup</button>
+          <button class="chip" id="chip-2" data-idea="Morning routine that 10x'd my productivity as a student">Student productivity</button>
+          <button class="chip" id="chip-3" data-idea="AI tools that replaced my entire design team">AI replaces design</button>
+          <button class="chip" id="chip-4" data-idea="Why I quit my 9-5 to create content full time">Quitting 9-5</button>
+        </div>
+
+        <!-- Generate Button -->
+        <button
+          id="generate-btn"
+          class="generate-btn"
+          aria-label="Generate content kit"
+          aria-busy="false"
+        >
+          <span class="btn-icon" aria-hidden="true">⚡</span>
+          <span class="btn-text">Generate Content Kit</span>
+          <span class="btn-loader" aria-hidden="true"></span>
+        </button>
+
+        <!-- Error Message -->
+        <div id="error-msg" class="error-msg" role="alert" aria-live="assertive" hidden></div>
+      </div>
+    </section>
+
+    <!-- ─── Results Section ──────────────────────────────────────────────── -->
+    <section
+      id="results-section"
+      class="results-section"
+      aria-label="Generated content kit"
+      aria-live="polite"
+      hidden
+    >
+      <div class="results-header">
+        <div class="results-badge">
+          <span aria-hidden="true">✨</span> Content Kit Ready
+        </div>
+        <button id="regenerate-btn" class="regenerate-btn" aria-label="Regenerate content kit">
+          <span aria-hidden="true">🔄</span> Regenerate
+        </button>
+      </div>
+
+      <!-- Platform + Vibe Banner -->
+      <div class="meta-banner" id="meta-banner">
+        <div class="meta-item" id="meta-platform">
+          <span class="meta-icon" aria-hidden="true">📱</span>
+          <div>
+            <span class="meta-key">Best Platform</span>
+            <span class="meta-val" id="platform-val">—</span>
+          </div>
+        </div>
+        <div class="meta-divider" aria-hidden="true"></div>
+        <div class="meta-item" id="meta-vibe">
+          <span class="meta-icon" aria-hidden="true">🎵</span>
+          <div>
+            <span class="meta-key">Content Vibe</span>
+            <span class="meta-val" id="vibe-val">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Output Cards Grid -->
+      <div class="cards-grid">
+
+        <!-- Card 1: Hook -->
+        <article class="output-card card-hook" aria-labelledby="hook-heading">
+          <div class="card-header">
+            <div class="card-icon-wrap hook-icon" aria-hidden="true">🎣</div>
+            <div>
+              <h2 id="hook-heading" class="card-title">Attention Hook</h2>
+              <p class="card-sub">Scroll-stopping opening line</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <p id="hook-text" class="hook-text" aria-label="Generated hook"></p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tag">Max 12 words · High retention</span>
+            <button class="copy-btn" id="copy-hook" data-target="hook-text" aria-label="Copy hook to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span> Copy
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 2: Cinematic Prompt -->
+        <article class="output-card card-visual" aria-labelledby="prompt-heading">
+          <div class="card-header">
+            <div class="card-icon-wrap visual-icon" aria-hidden="true">🎬</div>
+            <div>
+              <h2 id="prompt-heading" class="card-title">Cinematic Prompt</h2>
+              <p class="card-sub">AI-ready visual generation prompt</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <p id="prompt-text" class="prompt-text mono" aria-label="Generated cinematic prompt"></p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tag">MidJourney / DALL·E / Sora ready</span>
+            <button class="copy-btn" id="copy-prompt" data-target="prompt-text" aria-label="Copy cinematic prompt to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span> Copy
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 3: Distribution -->
+        <article class="output-card card-dist" aria-labelledby="dist-heading">
+          <div class="card-header">
+            <div class="card-icon-wrap dist-icon" aria-hidden="true">📢</div>
+            <div>
+              <h2 id="dist-heading" class="card-title">Distribution Strategy</h2>
+              <p class="card-sub">Niche hashtags for maximum reach</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="hashtags-wrap" class="hashtags-wrap" aria-label="Generated hashtags"></div>
+          </div>
+          <div class="card-footer">
+            <span class="card-tag">5 niche-specific hashtags</span>
+            <button class="copy-btn" id="copy-hashtags" data-target="hashtags-wrap" aria-label="Copy hashtags to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span> Copy All
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 4: Content Angle -->
+        <article class="output-card card-angle" aria-labelledby="angle-heading">
+          <div class="card-header">
+            <div class="card-icon-wrap angle-icon" aria-hidden="true">🎯</div>
+            <div>
+              <h2 id="angle-heading" class="card-title">Content Angle</h2>
+              <p class="card-sub">Your unique narrative framing</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <p id="angle-text" class="angle-text" aria-label="Generated content angle"></p>
+          </div>
+          <div class="card-footer">
+            <span class="card-tag">Positioning strategy</span>
+            <button class="copy-btn" id="copy-angle" data-target="angle-text" aria-label="Copy content angle to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span> Copy
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 5: Full Content (Script/Thread/Carousel) -->
+        <article class="output-card card-full span-2" aria-labelledby="full-heading">
+          <div class="card-header">
+            <div class="card-icon-wrap full-icon" aria-hidden="true">📝</div>
+            <div>
+              <h2 id="full-heading" class="card-title">Full Content</h2>
+              <p class="card-sub" id="full-sub">Ready to publish</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <pre id="full-text" class="full-text" aria-label="Generated full content"></pre>
+          </div>
+          <div class="card-footer">
+            <span class="card-tag" id="full-tag">Script / Thread / Carousel</span>
+            <button class="copy-btn" id="copy-full" data-target="full-text" aria-label="Copy full content to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span> Copy Full
+            </button>
+          </div>
+        </article>
+
+      </div><!-- /cards-grid -->
+
+      <!-- Export All Button -->
+      <div class="export-row">
+        <button id="export-btn" class="export-btn" aria-label="Copy complete content kit to clipboard">
+          <span aria-hidden="true">📤</span> Export Full Kit
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ─── How It Works ─────────────────────────────────────────────────── -->
+    <section class="how-section" aria-labelledby="how-heading">
+      <h2 id="how-heading" class="section-title">How the magic works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num" aria-hidden="true">01</div>
+          <div class="step-icon" aria-hidden="true">💭</div>
+          <h3 class="step-title">Raw Idea</h3>
+          <p class="step-desc">Type anything — a thought, a topic, a project. No structure needed.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step-card">
+          <div class="step-num" aria-hidden="true">02</div>
+          <div class="step-icon" aria-hidden="true">🧠</div>
+          <h3 class="step-title">AI Engine</h3>
+          <p class="step-desc">Gemini 1.5 Flash processes your idea through our structured creative prompt.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step-card">
+          <div class="step-num" aria-hidden="true">03</div>
+          <div class="step-icon" aria-hidden="true">🚀</div>
+          <h3 class="step-title">Viral Kit</h3>
+          <p class="step-desc">Get a complete hook, visual prompt, and distribution strategy — instantly.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ───────────────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <p class="footer-text">
+      Built with <span aria-label="lightning">⚡</span> for the future of content creation
+      &nbsp;·&nbsp; Powered by <strong>Gemini 1.5 Flash</strong> on <strong>Google Cloud Run</strong>
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
