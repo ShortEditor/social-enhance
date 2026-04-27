@@ -11,10 +11,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── Gemini Config ───────────────────────────────────────────────────────────
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
-const GEMINI_MODEL   = 'gemini-2.5-flash';
-const GEMINI_URL     = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+// ─── Groq Config ─────────────────────────────────────────────────────────────
+const GROQ_API_KEY = process.env.GROQ_API_KEY || 'YOUR_GROQ_API_KEY';
+const GROQ_MODEL   = 'llama-3.3-70b-versatile';
+const GROQ_URL     = 'https://api.groq.com/openai/v1/chat/completions';
 
 // ─── Prompt Builder ──────────────────────────────────────────────────────────
 function buildPrompt(userIdea, contentType, tone) {
@@ -67,31 +67,29 @@ app.post('/api/generate', async (req, res) => {
   }
 
   try {
-    const geminiResponse = await fetch(GEMINI_URL, {
+    const groqResponse = await fetch(GROQ_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(idea.trim(), contentType, tone) }] }],
-        generationConfig: { temperature: 0.9, topK: 40, topP: 0.95, maxOutputTokens: 8192 }
+        messages: [{ role: 'user', content: buildPrompt(idea.trim(), contentType, tone) }],
+        model: GROQ_MODEL,
+        temperature: 0.9,
+        max_tokens: 8192,
+        response_format: { type: "json_object" }
       })
     });
 
-    if (!geminiResponse.ok) {
-      const errBody = await geminiResponse.text();
-      console.error('Gemini API error:', errBody);
-      try {
-        const errJson = JSON.parse(errBody);
-        const retryInfo = (errJson?.error?.details || []).find(d => d['@type']?.includes('RetryInfo'));
-        if (retryInfo?.retryDelay) {
-          const secs = parseInt(retryInfo.retryDelay);
-          return res.status(429).json({ error: `Rate limit reached. Please wait ${secs} seconds and try again.` });
-        }
-      } catch (_) {}
+    if (!groqResponse.ok) {
+      const errBody = await groqResponse.text();
+      console.error('Groq API error:', errBody);
       return res.status(502).json({ error: 'AI generation failed. Check your API key.' });
     }
 
-    const geminiData = await geminiResponse.json();
-    const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const groqData = await groqResponse.json();
+    const rawText = groqData?.choices?.[0]?.message?.content;
 
     if (!rawText) {
       return res.status(502).json({ error: 'Empty response from AI engine.' });
@@ -117,7 +115,7 @@ app.post('/api/generate', async (req, res) => {
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', model: GEMINI_MODEL, timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', model: GROQ_MODEL, timestamp: new Date().toISOString() });
 });
 
 // ─── Fallback to SPA ─────────────────────────────────────────────────────────
@@ -127,6 +125,6 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Instant-Epic server running on http://localhost:${PORT}`);
-  console.log(`   Model: ${GEMINI_MODEL}`);
+  console.log(`   Model: ${GROQ_MODEL}`);
   console.log(`   Press Ctrl+C to stop\n`);
 });
